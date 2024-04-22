@@ -2,11 +2,11 @@
 
 <!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         backupGlobals="false"
-         colors="true"
-         bootstrap="tests/bootstrap.php"
-         stopOnDeprecation="false"
+    xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+    backupGlobals="false"
+    colors="true"
+    bootstrap="tests/bootstrap.php"
+    stopOnDeprecation="false"
 >
     <php>
         <ini name="display_errors" value="1" />
@@ -30,11 +30,11 @@
     </source>
     <coverage includeUncoveredFiles="true">
     </coverage>
+    <extensions>
+        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
+    </extensions>
 
     <!-- <listeners>
         <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
     </listeners> -->
-
-    <extensions>
-    </extensions>
 </phpunit>

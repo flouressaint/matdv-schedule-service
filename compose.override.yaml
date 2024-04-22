@@ -2,6 +2,9 @@ version: "3"
 
 services:
   ###> doctrine/doctrine-bundle ###
+  database-test:
+    ports:
+      - "5433:5432"
   database:
     ports:
       - "5432:5432"

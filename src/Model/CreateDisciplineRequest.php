@@ -4,23 +4,12 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-class BaseDisciplineDetails
+use Symfony\Component\Validator\Constraints\NotBlank;
+
+class CreateDisciplineRequest
 {
-    private int $id;
-
+    #[NotBlank]
     private string $name;
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
-    }
 
     public function getName(): string
     {

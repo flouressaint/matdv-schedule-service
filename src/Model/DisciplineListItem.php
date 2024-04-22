@@ -21,5 +21,4 @@ class DisciplineListItem
     {
         return $this->name;
     }
-
 }
