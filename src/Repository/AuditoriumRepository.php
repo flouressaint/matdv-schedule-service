@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Auditorium;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -21,6 +22,10 @@ class AuditoriumRepository extends ServiceEntityRepository
         parent::__construct($registry, Auditorium::class);
     }
 
+    public function findAllSortedByName(): array
+    {
+        return $this->findBy([], ['name' => Criteria::ASC]);
+    }
     //    /**
     //     * @return Auditorium[] Returns an array of Auditorium objects
     //     */
