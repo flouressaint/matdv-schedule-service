@@ -20,4 +20,10 @@ class AuditoriumController extends AbstractController
     {
         return $this->json($this->auditoriumService->getAuditoriums());
     }
+
+    #[Route('/{id}', name: 'auditorium_show', methods: ['GET'])]
+    public function show(int $id): JsonResponse
+    {
+        return $this->json($this->auditoriumService->getAuditorium($id));
+    }
 }

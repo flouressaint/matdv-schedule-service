@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Auditorium;
+use App\Exception\AuditoriumNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
@@ -25,6 +26,16 @@ class AuditoriumRepository extends ServiceEntityRepository
     public function findAllSortedByName(): array
     {
         return $this->findBy([], ['name' => Criteria::ASC]);
+    }
+
+    public function getAuditoriumById(int $id): Auditorium
+    {
+        $auditroium = $this->find($id);
+        if (null == $auditroium) {
+            throw new AuditoriumNotFoundException();
+        }
+
+        return $auditroium;
     }
     //    /**
     //     * @return Auditorium[] Returns an array of Auditorium objects

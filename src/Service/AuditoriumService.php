@@ -29,4 +29,11 @@ class AuditoriumService
 
         return new AuditoriumListResponse($items);
     }
+
+    public function getAuditorium(int $id): AuditoriumListItem
+    {
+        $auditorium = $this->auditoriumRepository->getAuditoriumById($id);
+
+        return new AuditoriumListItem($auditorium->getId(), $auditorium->getName());
+    }
 }
