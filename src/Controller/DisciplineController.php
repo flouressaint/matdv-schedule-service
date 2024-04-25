@@ -33,21 +33,6 @@ class DisciplineController extends AbstractController
         return $this->json($this->disciplineService->getDisciplines());
     }
 
-    // #[Route('', name: 'discipline_create', methods: ['POST'])]
-    // public function create(Request $request): JsonResponse
-    // {
-    //     $discipline = new Discipline();
-    //     $data       = $request->toArray();
-    //     $name       = $data['name'];
-    //     $discipline->setName($name);
-
-    //     $this->em->persist($discipline);
-    //     $this->em->flush();
-    //     return $this->json([
-    //         'id' => $discipline->getId(),
-    //     ]);
-    // }
-
     #[OA\Response(
         response: 200,
         description: 'Successful response',

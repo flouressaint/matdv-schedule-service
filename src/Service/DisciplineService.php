@@ -8,6 +8,7 @@ use App\Entity\Discipline;
 use App\Model\CreateDisciplineRequest;
 use App\Model\DisciplineListItem;
 use App\Model\DisciplineListResponse;
+use App\Model\IdResponse;
 use App\Model\UpdateDisciplineRequest;
 use App\Repository\DisciplineRepository;
 
@@ -39,19 +40,19 @@ class DisciplineService
         return new DisciplineListItem($discipline->getId(), $discipline->getName());
     }
 
+    public function createDiscipline(CreateDisciplineRequest $request): IdResponse
+    {
+        $discipline = (new Discipline())->setName($request->getName());
+        $this->disciplineRepository->saveAndCommit($discipline);
+
+        return new IdResponse($discipline->getId());
+    }
+
     public function updateDiscipline(int $id, UpdateDisciplineRequest $request): void
     {
         $discipline = $this->disciplineRepository->getDisciplineById($id);
         $discipline->setName($request->getName());
         $this->disciplineRepository->commit();
-    }
-
-    public function createDiscipline(CreateDisciplineRequest $request): int
-    {
-        $discipline = (new Discipline())->setName($request->getName());
-        $this->disciplineRepository->saveAndCommit($discipline);
-
-        return $discipline->getId();
     }
 
     public function deleteDiscipline(int $id): void

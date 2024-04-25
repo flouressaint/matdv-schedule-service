@@ -7,6 +7,9 @@ namespace App\Service;
 use App\Entity\Auditorium;
 use App\Model\AuditoriumListItem;
 use App\Model\AuditoriumListResponse;
+use App\Model\CreateAuditoriumRequest;
+use App\Model\IdResponse;
+use App\Model\UpdateAuditoriumRequest;
 use App\Repository\AuditoriumRepository;
 
 class AuditoriumService
@@ -35,5 +38,26 @@ class AuditoriumService
         $auditorium = $this->auditoriumRepository->getAuditoriumById($id);
 
         return new AuditoriumListItem($auditorium->getId(), $auditorium->getName());
+    }
+
+    public function createAuditorium(CreateAuditoriumRequest $request): IdResponse
+    {
+        $auditorium = (new Auditorium())->setName($request->getName());
+        $this->auditoriumRepository->saveAndCommit($auditorium);
+
+        return new IdResponse($auditorium->getId());
+    }
+
+    public function updateAuditorium(int $id, UpdateAuditoriumRequest $request): void
+    {
+        $auditorium = $this->auditoriumRepository->getAuditoriumById($id);
+        $auditorium->setName($request->getName());
+        $this->auditoriumRepository->commit();
+    }
+
+    public function deleteAuditorium(int $id): void
+    {
+        $auditorium = $this->auditoriumRepository->getAuditoriumById($id);
+        $this->auditoriumRepository->removeAndCommit($auditorium);
     }
 }
