@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240425133807 extends AbstractMigration
+final class Version20240425145913 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -22,6 +22,7 @@ final class Version20240425133807 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SEQUENCE auditorium_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE discipline_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE hometask_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE lesson_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE study_group_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE "user_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
@@ -29,6 +30,7 @@ final class Version20240425133807 extends AbstractMigration
         $this->addSql('CREATE TABLE auditorium (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE discipline (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_75BEEE3F5E237E06 ON discipline (name)');
+        $this->addSql('CREATE TABLE hometask (id INT NOT NULL, description TEXT NOT NULL, attachment VARCHAR(700) DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE lesson (id INT NOT NULL, teacher_id INT NOT NULL, study_group_id INT NOT NULL, auditorium_id INT NOT NULL, date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, duration INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_F87474F341807E1D ON lesson (teacher_id)');
         $this->addSql('CREATE INDEX IDX_F87474F35DDDCCCE ON lesson (study_group_id)');
@@ -57,6 +59,7 @@ final class Version20240425133807 extends AbstractMigration
         $this->addSql('CREATE SCHEMA public');
         $this->addSql('DROP SEQUENCE auditorium_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE discipline_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE hometask_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE lesson_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE study_group_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE "user_id_seq" CASCADE');
@@ -70,6 +73,7 @@ final class Version20240425133807 extends AbstractMigration
         $this->addSql('ALTER TABLE user_study_group DROP CONSTRAINT FK_9BA1DDB05DDDCCCE');
         $this->addSql('DROP TABLE auditorium');
         $this->addSql('DROP TABLE discipline');
+        $this->addSql('DROP TABLE hometask');
         $this->addSql('DROP TABLE lesson');
         $this->addSql('DROP TABLE study_group');
         $this->addSql('DROP TABLE "user"');
