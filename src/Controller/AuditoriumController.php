@@ -36,7 +36,7 @@ class AuditoriumController extends AbstractController
         return $this->json($this->auditoriumService->createAuditorium($request));
     }
 
-    #[Route('', name: 'auditorium_update', methods: ['UPDATE'])]
+    #[Route('/{id}', name: 'auditorium_update', methods: ['PUT'])]
     public function edit(int $id, #[MapRequestPayload] UpdateAuditoriumRequest $request): JsonResponse
     {
         $this->auditoriumService->updateAuditorium($id, $request);
