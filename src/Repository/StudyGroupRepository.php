@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\StudyGroup;
 use App\Exception\StudyGroupNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -32,6 +33,11 @@ class StudyGroupRepository extends ServiceEntityRepository
         }
 
         return $studyGroup;
+    }
+
+    public function findAllSortedByName(): array
+    {
+        return $this->findBy([], ['name' => Criteria::ASC]);
     }
     //    /**
     //     * @return StudyGroup[] Returns an array of StudyGroup objects

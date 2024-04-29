@@ -36,6 +36,18 @@ class AdminController extends AbstractController
         return $this->json(null);
     }
 
+    #[Route(path: '/api/v1/admin/studyGroup', name: 'studyGroup_index', methods: ['GET'])]
+    public function getStudyGroups(): JsonResponse
+    {
+        return $this->json($this->studyGroupService->getStudyGroups());
+    }
+
+    #[Route(path: '/api/v1/admin/studyGroup/{id}', name: 'studyGroup_show', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function getStudyGroup(int $id): JsonResponse
+    {
+        return $this->json($this->studyGroupService->getStudyGroup($id));
+    }
+
     #[Route(path: 'api/v1/admin/studyGroup', methods: ['POST'])]
     public function createStudyGroup(#[MapRequestPayload] CreateStudyGroupRequest $request): JsonResponse
     {
@@ -58,5 +70,11 @@ class AdminController extends AbstractController
         return $this->json(null);
     }
 
-    // #[Route('api/v1/admin/studyGroup/enroll/{id}', name: 'studyGroup_enroll_student', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route('api/v1/admin/studyGroup/{studyGroupId}/enroll/{studentId}', name: 'studyGroup_enroll_student', requirements: ['studyGroupId' => '\d+', 'studentId' => '\d+'], methods: ['POST'])]
+    public function enrollStudent(int $studyGroupId, int $studentId): JsonResponse
+    {
+        $this->studyGroupService->enrollStudent($studyGroupId, $studentId);
+
+        return $this->json(null);
+    }
 }
