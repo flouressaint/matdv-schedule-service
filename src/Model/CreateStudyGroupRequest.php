@@ -10,6 +10,8 @@ class CreateStudyGroupRequest
 {
     #[NotBlank]
     private string $name;
+    #[NotBlank]
+    private int $teacherId;
 
     public function getName(): string
     {
@@ -19,6 +21,18 @@ class CreateStudyGroupRequest
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getTeacherId(): int
+    {
+        return $this->teacherId;
+    }
+
+    public function setTeacherId(int $teacherId): self
+    {
+        $this->teacherId = $teacherId;
 
         return $this;
     }

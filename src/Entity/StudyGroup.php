@@ -15,11 +15,11 @@ class StudyGroup
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'studyGroupTeachers')]
-    private Collection $teachers;
+    #[ORM\ManyToOne(inversedBy: 'studyGroupsTeacher')]
+    private ?User $teacher = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'studyGroups')]
     private Collection $students;
@@ -27,7 +27,6 @@ class StudyGroup
     public function __construct()
     {
         $this->students = new ArrayCollection();
-        $this->teachers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -43,6 +42,18 @@ class StudyGroup
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getTeacher(): ?User
+    {
+        return $this->teacher;
+    }
+
+    public function setTeacher(?User $teacher): static
+    {
+        $this->teacher = $teacher;
 
         return $this;
     }
@@ -67,30 +78,6 @@ class StudyGroup
     public function removeStudent(User $student): static
     {
         $this->students->removeElement($student);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, User>
-     */
-    public function getTeachers(): Collection
-    {
-        return $this->teachers;
-    }
-
-    public function addTeacher(User $teacher): static
-    {
-        if (!$this->teachers->contains($teacher)) {
-            $this->teachers->add($teacher);
-        }
-
-        return $this;
-    }
-
-    public function removeTeacher(User $teacher): static
-    {
-        $this->teachers->removeElement($teacher);
 
         return $this;
     }

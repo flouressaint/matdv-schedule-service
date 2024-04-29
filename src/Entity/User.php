@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -34,6 +36,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    #[ORM\OneToMany(targetEntity: StudyGroup::class, mappedBy: 'teacher')]
+    private Collection $studyGroupsTeacher;
+
+    #[ORM\ManyToMany(targetEntity: StudyGroup::class, mappedBy: 'students')]
+    private Collection $studyGroups;
+
+    public function __construct()
+    {
+        $this->studyGroupsTeacher = new ArrayCollection();
+        $this->studyGroups = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -120,5 +134,62 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, StudyGroup>
+     */
+    public function getStudyGroupsTeacher(): Collection
+    {
+        return $this->studyGroupsTeacher;
+    }
+
+    public function addStudyGroupsTeacher(StudyGroup $studyGroupsTeacher): static
+    {
+        if (!$this->studyGroupsTeacher->contains($studyGroupsTeacher)) {
+            $this->studyGroupsTeacher->add($studyGroupsTeacher);
+            $studyGroupsTeacher->setTeacher($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStudyGroupsTeacher(StudyGroup $studyGroupsTeacher): static
+    {
+        if ($this->studyGroupsTeacher->removeElement($studyGroupsTeacher)) {
+            // set the owning side to null (unless already changed)
+            if ($studyGroupsTeacher->getTeacher() === $this) {
+                $studyGroupsTeacher->setTeacher(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, StudyGroup>
+     */
+    public function getStudyGroups(): Collection
+    {
+        return $this->studyGroups;
+    }
+
+    public function addStudyGroup(StudyGroup $studyGroup): static
+    {
+        if (!$this->studyGroups->contains($studyGroup)) {
+            $this->studyGroups->add($studyGroup);
+            $studyGroup->addStudent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStudyGroup(StudyGroup $studyGroup): static
+    {
+        if ($this->studyGroups->removeElement($studyGroup)) {
+            $studyGroup->removeStudent($this);
+        }
+
+        return $this;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Exception\TeacherNotFoundException;
 use App\Exception\UserNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -54,6 +55,21 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
 
         return $user;
+    }
+
+    public function isTeacher(User $user): bool
+    {
+        return 'ROLE_TEACHER' === $user->getRoles()[0];
+    }
+
+    public function getTeacherById(int $teacherId): User
+    {
+        $teacher = $this->find($teacherId);
+        if (null === $teacher || !$this->isTeacher($teacher)) {
+            throw new TeacherNotFoundException();
+        }
+
+        return $teacher;
     }
 
     //    /**

@@ -36,27 +36,27 @@ class AdminController extends AbstractController
         return $this->json(null);
     }
 
-    // #[Route(path: 'api/v1/admin/studyGroup', methods: ['POST'])]
-    // public function createStudyGroup(#[MapRequestPayload] CreateStudyGroupRequest $request): JsonResponse
-    // {
-    //     return $this->json($this->studyGroupService->createStudyGroup($request));
-    // }
+    #[Route(path: 'api/v1/admin/studyGroup', methods: ['POST'])]
+    public function createStudyGroup(#[MapRequestPayload] CreateStudyGroupRequest $request): JsonResponse
+    {
+        return $this->json($this->studyGroupService->createStudyGroup($request));
+    }
 
-    // #[Route('api/v1/admin/studyGroup/{id}', name: 'studyGroup_update', methods: ['PATCH'])]
-    // public function edit(int $id, #[MapRequestPayload] UpdateStudyGroupRequest $request): JsonResponse
-    // {
-    //     $this->studyGroupService->updateStudyGroup($id, $request);
+    #[Route('api/v1/admin/studyGroup/{id}', name: 'studyGroup_update', methods: ['PATCH'])]
+    public function edit(int $id, #[MapRequestPayload] UpdateStudyGroupRequest $request): JsonResponse
+    {
+        $this->studyGroupService->updateStudyGroup($id, $request);
 
-    //     return $this->json(null);
-    // }
+        return $this->json(null);
+    }
 
-    // #[Route('api/v1/admin/studyGroup/{id}', name: 'studyGroup_delete', requirements: ['id' => '\d+'], methods: ['DELETE'])]
-    // public function delete(int $id): JsonResponse
-    // {
-    //     $this->studyGroupService->deleteStudyGroup($id);
+    #[Route('api/v1/admin/studyGroup/{id}', name: 'studyGroup_delete', requirements: ['id' => '\d+'], methods: ['DELETE'])]
+    public function delete(int $id): JsonResponse
+    {
+        $this->studyGroupService->deleteStudyGroup($id);
 
-    //     return $this->json(null);
-    // }
+        return $this->json(null);
+    }
 
     // #[Route('api/v1/admin/studyGroup/enroll/{id}', name: 'studyGroup_enroll_student', requirements: ['id' => '\d+'], methods: ['POST'])]
 }
