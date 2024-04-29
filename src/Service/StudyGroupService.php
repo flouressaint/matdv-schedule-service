@@ -55,7 +55,12 @@ class StudyGroupService
     public function updateStudyGroup(int $id, UpdateStudyGroupRequest $request): void
     {
         $studygroup = $this->studyGroupRepository->getStudyGroupById($id);
-        $studygroup->setName($request->getName());
+        if (null !== $request->getName()) {
+            $studygroup->setName($request->getName());
+        }
+        if (null !== $request->getTeacherId()) {
+            $studygroup->setTeacher($this->userRepository->getTeacherById($request->getTeacherId()));
+        }
         $this->studyGroupRepository->commit();
     }
 
