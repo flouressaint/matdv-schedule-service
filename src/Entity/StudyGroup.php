@@ -24,6 +24,10 @@ class StudyGroup
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'studyGroups')]
     private Collection $students;
 
+    #[ORM\ManyToOne(inversedBy: 'studyGroups')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?StudyGroupCategory $studyGroupCategory = null;
+
     public function __construct()
     {
         $this->students = new ArrayCollection();
@@ -78,6 +82,18 @@ class StudyGroup
     public function removeStudent(User $student): static
     {
         $this->students->removeElement($student);
+
+        return $this;
+    }
+
+    public function getStudyGroupCategory(): ?StudyGroupCategory
+    {
+        return $this->studyGroupCategory;
+    }
+
+    public function setStudyGroupCategory(?StudyGroupCategory $studyGroupCategory): static
+    {
+        $this->studyGroupCategory = $studyGroupCategory;
 
         return $this;
     }

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\CreateStudyGroupCategoryRequest;
 use App\Model\CreateStudyGroupRequest;
 use App\Model\ErrorResponse;
 use App\Model\UpdateStudyGroupRequest;
 use App\Service\RoleService;
+use App\Service\StudyGroupCategoryService;
 use App\Service\StudyGroupService;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
@@ -21,7 +23,8 @@ class AdminController extends AbstractController
 {
     public function __construct(
         private readonly RoleService $roleService,
-        private readonly StudyGroupService $studyGroupService
+        private readonly StudyGroupService $studyGroupService,
+        private readonly StudyGroupCategoryService $studyGroupCategoryService
     ) {
     }
 
@@ -76,5 +79,11 @@ class AdminController extends AbstractController
         $this->studyGroupService->enrollStudent($studyGroupId, $studentId);
 
         return $this->json(null);
+    }
+
+    #[Route(path: 'api/v1/admin/studyGroupCategory', methods: ['POST'])]
+    public function createStudyGroupCategory(#[MapRequestPayload] CreateStudyGroupCategoryRequest $request): JsonResponse
+    {
+        return $this->json($this->studyGroupCategoryService->createStudyGroupCategory($request));
     }
 }
