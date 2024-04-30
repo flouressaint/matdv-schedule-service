@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Model\CreateStudyGroupCategoryRequest;
 use App\Model\CreateStudyGroupRequest;
 use App\Model\ErrorResponse;
+use App\Model\UpdateStudyGroupCategoryRequest;
 use App\Model\UpdateStudyGroupRequest;
 use App\Service\RoleService;
 use App\Service\StudyGroupCategoryService;
@@ -81,9 +82,37 @@ class AdminController extends AbstractController
         return $this->json(null);
     }
 
+    #[Route(path: '/api/v1/admin/studyGroupCategory', name: 'studyGroup_index', methods: ['GET'])]
+    public function getStudyGroupCategories(): JsonResponse
+    {
+        return $this->json($this->studyGroupCategoryService->getStudyGroupCategories());
+    }
+
+    #[Route(path: 'api/v1/admin/studyGroupCategory/{id}', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function getStudyGroupCategory(int $id): JsonResponse
+    {
+        return $this->json($this->studyGroupCategoryService->getStudyGroupCategory($id));
+    }
+
     #[Route(path: 'api/v1/admin/studyGroupCategory', methods: ['POST'])]
     public function createStudyGroupCategory(#[MapRequestPayload] CreateStudyGroupCategoryRequest $request): JsonResponse
     {
         return $this->json($this->studyGroupCategoryService->createStudyGroupCategory($request));
+    }
+
+    #[Route('api/v1/admin/studyGroupCategory/{id}', requirements: ['id' => '\d+'], methods: ['PATCH'])]
+    public function editStudyGroupCategory(int $id, #[MapRequestPayload] UpdateStudyGroupCategoryRequest $request): JsonResponse
+    {
+        $this->studyGroupCategoryService->updateStudyGroupCategory($id, $request);
+
+        return $this->json(null);
+    }
+
+    #[Route('api/v1/admin/studyGroupCategory/{id}', requirements: ['id' => '\d+'], methods: ['DELETE'])]
+    public function deleteStudyGroupCategory(int $id): JsonResponse
+    {
+        $this->studyGroupCategoryService->deleteStudyGroupCategory($id);
+
+        return $this->json(null);
     }
 }

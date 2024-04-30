@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\StudyGroupCategory;
+use App\Exception\StudyGroupCategoryNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -23,6 +25,20 @@ class StudyGroupCategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, StudyGroupCategory::class);
     }
 
+    public function getStudyGroupCategoryById(int $id): StudyGroupCategory
+    {
+        $studyGroupCategory = $this->find($id);
+        if (null === $studyGroupCategory) {
+            throw new StudyGroupCategoryNotFoundException();
+        }
+
+        return $studyGroupCategory;
+    }
+
+    public function findAllSortedByName(): array
+    {
+        return $this->findBy([], ['name' => Criteria::ASC]);
+    }
     //    /**
     //     * @return StudyGroupCategory[] Returns an array of StudyGroupCategory objects
     //     */
