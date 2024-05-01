@@ -12,6 +12,7 @@ use App\Model\StudyGroupListItem;
 use App\Model\StudyGroupListResponse;
 use App\Model\UpdateStudyGroupRequest;
 use App\Model\UserResponse;
+use App\Repository\StudyGroupCategoryRepository;
 use App\Repository\StudyGroupRepository;
 use App\Repository\UserRepository;
 
@@ -19,6 +20,7 @@ class StudyGroupService
 {
     public function __construct(
         private readonly StudyGroupRepository $studyGroupRepository,
+        private readonly StudyGroupCategoryRepository $studyGroupCategoryRepository,
         private readonly UserRepository $userRepository
     ) {
     }
@@ -26,6 +28,25 @@ class StudyGroupService
     public function getStudyGroups(): StudyGroupListResponse
     {
         $studyGroups = $this->studyGroupRepository->findAllSortedByName();
+        $studyGroups = array_map(
+            fn (StudyGroup $studyGroup) => new StudyGroupListItem(
+                $studyGroup->getId(),
+                $studyGroup->getName(),
+                new UserResponse($studyGroup->getTeacher()->getId(), $studyGroup->getTeacher()->getFullName()),
+                array_map(
+                    fn (User $student) => new UserResponse($student->getId(), $student->getFullName()),
+                    $studyGroup->getStudents()->toArray()
+                )
+            ),
+            $studyGroups
+        );
+
+        return new StudyGroupListResponse($studyGroups);
+    }
+
+    public function getStudyGroupsByCategory(int $categoryId): StudyGroupListResponse
+    {
+        $studyGroups = $this->studyGroupRepository->getStudyGroupsByCategoryId($categoryId);
         $studyGroups = array_map(
             fn (StudyGroup $studyGroup) => new StudyGroupListItem(
                 $studyGroup->getId(),
@@ -67,7 +88,8 @@ class StudyGroupService
     {
         $studyGroup = (new StudyGroup())
             ->setName($request->getName())
-            ->setTeacher($this->userRepository->getTeacherById($request->getTeacherId()));
+            ->setTeacher($this->userRepository->getTeacherById($request->getTeacherId()))
+            ->setStudyGroupCategory($this->studyGroupCategoryRepository->getStudyGroupCategoryById($request->getCategoryId()));
         $this->studyGroupRepository->saveAndCommit($studyGroup);
 
         return new IdResponse($studyGroup->getId());

@@ -39,6 +39,16 @@ class StudyGroupRepository extends ServiceEntityRepository
     {
         return $this->findBy([], ['name' => Criteria::ASC]);
     }
+
+    public function getStudyGroupsByCategoryId(int $categoryId): array
+    {
+        $studyGroups = $this->findBy(['studyGroupCategory' => $categoryId]);
+        if (empty($studyGroups)) {
+            throw new StudyGroupNotFoundException();
+        }
+
+        return $studyGroups;
+    }
     //    /**
     //     * @return StudyGroup[] Returns an array of StudyGroup objects
     //     */
