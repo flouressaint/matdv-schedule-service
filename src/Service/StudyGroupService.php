@@ -32,7 +32,10 @@ class StudyGroupService
             fn (StudyGroup $studyGroup) => new StudyGroupListItem(
                 $studyGroup->getId(),
                 $studyGroup->getName(),
-                new UserResponse($studyGroup->getTeacher()->getId(), $studyGroup->getTeacher()->getFullName()),
+                new UserResponse(
+                    $studyGroup->getTeacher()->getId(),
+                    $studyGroup->getTeacher()->getFullName()
+                ),
                 array_map(
                     fn (User $student) => new UserResponse($student->getId(), $student->getFullName()),
                     $studyGroup->getStudents()->toArray()

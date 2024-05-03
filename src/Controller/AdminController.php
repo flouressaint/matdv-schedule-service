@@ -125,6 +125,18 @@ class AdminController extends AbstractController
         return $this->json($this->studyGroupService->getStudyGroupsByCategory($id));
     }
 
+    #[Route(path: '/api/v1/admin/lesson', name: 'lesson_index', methods: ['GET'])]
+    public function getLessons(): JsonResponse
+    {
+        return $this->json($this->lessonService->getLessons());
+    }
+
+    #[Route(path: '/api/v1/admin/lesson/{id}', name: 'lesson_show', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function getLesson(int $id): JsonResponse
+    {
+        return $this->json($this->lessonService->getLesson($id));
+    }
+
     #[Route(path: '/api/v1/admin/lesson', methods: ['POST'])]
     public function createLesson(#[MapRequestPayload] CreateLessonRequest $request): JsonResponse
     {

@@ -38,6 +38,16 @@ class LessonRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findAllSortedByDateAndTime(): array
+    {
+        return $this->createQueryBuilder('l')
+            ->orderBy('l.date', 'ASC')
+            ->orderBy('l.startTime', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function getLessonById(int $id): ?Lesson
     {
         $lesson = $this->find($id);
