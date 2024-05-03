@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\CreateLessonRequest;
 use App\Model\CreateStudyGroupCategoryRequest;
 use App\Model\CreateStudyGroupRequest;
 use App\Model\ErrorResponse;
 use App\Model\UpdateStudyGroupCategoryRequest;
 use App\Model\UpdateStudyGroupRequest;
+use App\Service\LessonService;
 use App\Service\RoleService;
 use App\Service\StudyGroupCategoryService;
 use App\Service\StudyGroupService;
@@ -25,7 +27,8 @@ class AdminController extends AbstractController
     public function __construct(
         private readonly RoleService $roleService,
         private readonly StudyGroupService $studyGroupService,
-        private readonly StudyGroupCategoryService $studyGroupCategoryService
+        private readonly StudyGroupCategoryService $studyGroupCategoryService,
+        private readonly LessonService $lessonService
     ) {
     }
 
@@ -120,5 +123,19 @@ class AdminController extends AbstractController
     public function studyGroupsByCategory(int $id): Response
     {
         return $this->json($this->studyGroupService->getStudyGroupsByCategory($id));
+    }
+
+    #[Route(path: '/api/v1/admin/lesson', methods: ['POST'])]
+    public function createLesson(#[MapRequestPayload] CreateLessonRequest $request): JsonResponse
+    {
+        return $this->json($this->lessonService->createLesson($request));
+    }
+
+    #[Route('api/v1/admin/lesson/{id}', requirements: ['id' => '\d+'], methods: ['DELETE'])]
+    public function deleteLesson(int $id): JsonResponse
+    {
+        $this->lessonService->deleteLesson($id);
+
+        return $this->json(null);
     }
 }

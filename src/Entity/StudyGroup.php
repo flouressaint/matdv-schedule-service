@@ -28,9 +28,13 @@ class StudyGroup
     #[ORM\JoinColumn(nullable: false)]
     private ?StudyGroupCategory $studyGroupCategory = null;
 
+    #[ORM\OneToMany(targetEntity: Lesson::class, mappedBy: 'studyGroup', orphanRemoval: true)]
+    private Collection $lessons;
+
     public function __construct()
     {
         $this->students = new ArrayCollection();
+        $this->lessons = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -94,6 +98,36 @@ class StudyGroup
     public function setStudyGroupCategory(?StudyGroupCategory $studyGroupCategory): static
     {
         $this->studyGroupCategory = $studyGroupCategory;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Lesson>
+     */
+    public function getLessons(): Collection
+    {
+        return $this->lessons;
+    }
+
+    public function addLesson(Lesson $lesson): static
+    {
+        if (!$this->lessons->contains($lesson)) {
+            $this->lessons->add($lesson);
+            $lesson->setStudyGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLesson(Lesson $lesson): static
+    {
+        if ($this->lessons->removeElement($lesson)) {
+            // set the owning side to null (unless already changed)
+            if ($lesson->getStudyGroup() === $this) {
+                $lesson->setStudyGroup(null);
+            }
+        }
 
         return $this;
     }
