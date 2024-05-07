@@ -4,13 +4,24 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    exceptions:
+        Symfony\Component\HttpKernel\Exception\NotFoundHttpException: { code: 404 }
+        App\Exception\AuditoriumNotFoundException: { code: 404, hidden: false }
+        App\Exception\HometaskNotFoundException: { code: 404, hidden: false }
+        App\Exception\LessonNotFoundException: { code: 404, hidden: false }
+        App\Exception\StudyGroupNotFoundException: { code: 404, hidden: false }
+        App\Exception\StudyGroupCategoryNotFoundException: { code: 404, hidden: false }
+        App\Exception\TeacherNotFoundException: { code: 404, hidden: false }
+        # App\Exception\UserAlreadyExistsException: { code: 404, hidden: false }
+        App\Exception\UserNotFoundException: { code: 404, hidden: false }
 
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-
+        bind:
+            bool $isDebug: '%kernel.debug%'
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
@@ -20,5 +31,11 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Service\ExceptionHandler\ExceptionMappingResolver:
+        arguments: ['%exceptions%']
+
+    App\Listener\ApiExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, priority: 10 }
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
