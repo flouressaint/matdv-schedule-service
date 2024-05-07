@@ -10,11 +10,13 @@ use App\Model\CreateStudyGroupRequest;
 use App\Model\IdResponse;
 use App\Model\StudyGroupListItem;
 use App\Model\StudyGroupListResponse;
+use App\Model\StudyGroupResponse;
 use App\Model\UpdateStudyGroupRequest;
 use App\Model\UserResponse;
 use App\Repository\StudyGroupCategoryRepository;
 use App\Repository\StudyGroupRepository;
 use App\Repository\UserRepository;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class StudyGroupService
 {
@@ -35,11 +37,26 @@ class StudyGroupService
                 new UserResponse(
                     $studyGroup->getTeacher()->getId(),
                     $studyGroup->getTeacher()->getFullName()
-                ),
-                array_map(
-                    fn (User $student) => new UserResponse($student->getId(), $student->getFullName()),
-                    $studyGroup->getStudents()->toArray()
                 )
+            ),
+            $studyGroups
+        );
+
+        return new StudyGroupListResponse($studyGroups);
+    }
+
+    public function getStudyGroupsForStudent(UserInterface $user): StudyGroupListResponse
+    {
+        $studyGroups = $this->studyGroupRepository->findAllSortedByName();
+        $studyGroups = array_filter($studyGroups, fn (StudyGroup $studyGroup) => $studyGroup->getStudents()->contains($user));
+        $studyGroups = array_map(
+            fn (StudyGroup $studyGroup) => new StudyGroupListItem(
+                $studyGroup->getId(),
+                $studyGroup->getName(),
+                new UserResponse(
+                    $studyGroup->getTeacher()->getId(),
+                    $studyGroup->getTeacher()->getFullName()
+                ),
             ),
             $studyGroups
         );
@@ -66,7 +83,7 @@ class StudyGroupService
         return new StudyGroupListResponse($studyGroups);
     }
 
-    public function getStudyGroup(int $id): StudyGroupListItem
+    public function getStudyGroup(int $id): StudyGroupResponse
     {
         $studyGroup = $this->studyGroupRepository->getStudyGroupById($id);
         $teacher = $studyGroup->getTeacher();
@@ -79,7 +96,7 @@ class StudyGroupService
             $students
         );
 
-        return new StudyGroupListItem(
+        return new StudyGroupResponse(
             $studyGroup->getId(),
             $studyGroup->getName(),
             new UserResponse($teacher->getId(), $teacher->getFullName()),
@@ -116,10 +133,10 @@ class StudyGroupService
         $this->studyGroupRepository->removeAndCommit($studyGroup);
     }
 
-    public function enrollStudent(int $id, int $studentId): void
+    public function enrollStudent(int $id, string $studentUsername): void
     {
         $studyGroup = $this->studyGroupRepository->getStudyGroupById($id);
-        $student = $this->userRepository->getUserById($studentId);
+        $student = $this->userRepository->getUserByUsername($studentUsername);
         if (!$studyGroup->getStudents()->contains($student)) {
             $studyGroup->addStudent($student);
         }

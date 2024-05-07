@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-class StudyGroupListItem
+class StudyGroupResponse
 {
+    /**
+     * @param UserResponse[] $students
+     */
     public function __construct(
         private int $id,
         private string $name,
         private UserResponse $teacher,
+        private array $students = []
     ) {
     }
 
@@ -26,5 +30,10 @@ class StudyGroupListItem
     public function getTeacher(): UserResponse
     {
         return $this->teacher;
+    }
+
+    public function getStudents(): array
+    {
+        return $this->students;
     }
 }

@@ -7,8 +7,6 @@ namespace App\Service;
 use App\Entity\Hometask;
 use App\Model\CreateHometaskRequest;
 use App\Model\HometaskResponse;
-use App\Model\IdResponse;
-use App\Model\UpdateHometaskRequest;
 use App\Repository\HometaskRepository;
 
 class HometaskService
@@ -25,17 +23,17 @@ class HometaskService
         return new HometaskResponse($hometask->getId(), $hometask->getDescription(), $hometask->getAttachment());
     }
 
-    public function createHometask(CreateHometaskRequest $request): IdResponse
+    public function createHometask(CreateHometaskRequest $request): Hometask
     {
         $hometask = (new Hometask())
             ->setDescription($request->getDescription())
             ->setAttachment($request->getAttachment());
         $this->hometaskRepository->saveAndCommit($hometask);
 
-        return new IdResponse($hometask->getId());
+        return $hometask;
     }
 
-    public function updateHometask(int $id, UpdateHometaskRequest $request): void
+    public function updateHometask(int $id, CreateHometaskRequest $request): void
     {
         $hometask = $this->hometaskRepository->getHometaskById($id);
         $hometask->setDescription($request->getDescription())

@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\CreateAuditoriumRequest;
 use App\Model\CreateLessonRequest;
 use App\Model\CreateStudyGroupCategoryRequest;
 use App\Model\CreateStudyGroupRequest;
 use App\Model\ErrorResponse;
+use App\Model\UpdateAuditoriumRequest;
 use App\Model\UpdateStudyGroupCategoryRequest;
 use App\Model\UpdateStudyGroupRequest;
+use App\Service\AuditoriumService;
 use App\Service\LessonService;
 use App\Service\RoleService;
 use App\Service\StudyGroupCategoryService;
@@ -22,34 +25,63 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[OA\Tag(name: 'Admin')]
 class AdminController extends AbstractController
 {
     public function __construct(
         private readonly RoleService $roleService,
+        private readonly AuditoriumService $auditoriumService,
         private readonly StudyGroupService $studyGroupService,
         private readonly StudyGroupCategoryService $studyGroupCategoryService,
         private readonly LessonService $lessonService
     ) {
     }
 
-    #[Route(path: '/api/v1/admin/grantTeacher/{userId}', methods: ['POST'])]
-    #[OA\Tag(name: 'Admin API')]
+    #[Route(path: '/api/v1/admin/grantTeacher/{username}', methods: ['POST'])]
     #[OA\Response(response: 200, description: 'Grants ROLE_TEACHER to a user')]
     #[OA\Response(response: 404, description: 'User not found', attachables: [new Model(type: ErrorResponse::class)])]
-    public function grantTeacher(int $userId): Response
+    public function grantTeacher(string $username): Response
     {
-        $this->roleService->grantTeacher($userId);
+        $this->roleService->grantTeacher($username);
 
         return $this->json(null);
     }
 
-    #[Route(path: '/api/v1/admin/studyGroup', name: 'studyGroup_index', methods: ['GET'])]
-    public function getStudyGroups(): JsonResponse
+    #[Route('/api/v1/admin/auditoriums', methods: ['GET'])]
+    public function auditoriums(): JsonResponse
+    {
+        return $this->json($this->auditoriumService->getAuditoriums());
+    }
+
+    #[Route('/api/v1/admin/auditorium', methods: ['POST'])]
+    public function createAuditorium(#[MapRequestPayload] CreateAuditoriumRequest $request): JsonResponse
+    {
+        return $this->json($this->auditoriumService->createAuditorium($request));
+    }
+
+    #[Route('/api/v1/admin/auditorium/{id}', methods: ['PUT'])]
+    public function updateAuditorium(int $id, #[MapRequestPayload] UpdateAuditoriumRequest $request): JsonResponse
+    {
+        $this->auditoriumService->updateAuditorium($id, $request);
+
+        return $this->json(null);
+    }
+
+    #[Route('/api/v1/admin/auditorium/{id}', requirements: ['id' => '\d+'], methods: ['DELETE'])]
+    public function delete(int $id): JsonResponse
+    {
+        $this->auditoriumService->deleteAuditorium($id);
+
+        return $this->json(null);
+    }
+
+    #[Route(path: '/api/v1/admin/studyGroups', methods: ['GET'])]
+    public function StudyGroups(): JsonResponse
     {
         return $this->json($this->studyGroupService->getStudyGroups());
     }
 
-    #[Route(path: '/api/v1/admin/studyGroup/{id}', name: 'studyGroup_show', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[Route(path: '/api/v1/admin/studyGroup/{id}', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function getStudyGroup(int $id): JsonResponse
     {
         return $this->json($this->studyGroupService->getStudyGroup($id));
@@ -61,40 +93,28 @@ class AdminController extends AbstractController
         return $this->json($this->studyGroupService->createStudyGroup($request));
     }
 
-    #[Route('api/v1/admin/studyGroup/{id}', name: 'studyGroup_update', methods: ['PATCH'])]
-    public function edit(int $id, #[MapRequestPayload] UpdateStudyGroupRequest $request): JsonResponse
+    #[Route('api/v1/admin/studyGroup/{id}', methods: ['PATCH'])]
+    public function editStudyGroup(int $id, #[MapRequestPayload] UpdateStudyGroupRequest $request): JsonResponse
     {
         $this->studyGroupService->updateStudyGroup($id, $request);
 
         return $this->json(null);
     }
 
-    #[Route('api/v1/admin/studyGroup/{id}', name: 'studyGroup_delete', requirements: ['id' => '\d+'], methods: ['DELETE'])]
-    public function delete(int $id): JsonResponse
+    #[Route('api/v1/admin/studyGroup/{id}', requirements: ['id' => '\d+'], methods: ['DELETE'])]
+    public function deleteStudyGroup(int $id): JsonResponse
     {
         $this->studyGroupService->deleteStudyGroup($id);
 
         return $this->json(null);
     }
 
-    #[Route('api/v1/admin/studyGroup/{studyGroupId}/enroll/{studentId}', name: 'studyGroup_enroll_student', requirements: ['studyGroupId' => '\d+', 'studentId' => '\d+'], methods: ['POST'])]
-    public function enrollStudent(int $studyGroupId, int $studentId): JsonResponse
+    #[Route('api/v1/admin/studyGroup/{studyGroupId}/enroll/{studentUsername}', requirements: ['studyGroupId' => '\d+'], methods: ['POST'])]
+    public function enrollStudent(int $studyGroupId, string $studentUsername): JsonResponse
     {
-        $this->studyGroupService->enrollStudent($studyGroupId, $studentId);
+        $this->studyGroupService->enrollStudent($studyGroupId, $studentUsername);
 
         return $this->json(null);
-    }
-
-    #[Route(path: '/api/v1/admin/studyGroupCategory', name: 'studyGroup_index', methods: ['GET'])]
-    public function getStudyGroupCategories(): JsonResponse
-    {
-        return $this->json($this->studyGroupCategoryService->getStudyGroupCategories());
-    }
-
-    #[Route(path: 'api/v1/admin/studyGroupCategory/{id}', requirements: ['id' => '\d+'], methods: ['GET'])]
-    public function getStudyGroupCategory(int $id): JsonResponse
-    {
-        return $this->json($this->studyGroupCategoryService->getStudyGroupCategory($id));
     }
 
     #[Route(path: 'api/v1/admin/studyGroupCategory', methods: ['POST'])]
@@ -119,19 +139,19 @@ class AdminController extends AbstractController
         return $this->json(null);
     }
 
-    #[Route(path: '/api/v1/studyGroupCategory/{id}/studygroups', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[Route(path: 'api/v1/admin/studyGroupCategory/{id}', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function studyGroupsByCategory(int $id): Response
     {
         return $this->json($this->studyGroupService->getStudyGroupsByCategory($id));
     }
 
-    #[Route(path: '/api/v1/admin/lesson', name: 'lesson_index', methods: ['GET'])]
+    #[Route(path: '/api/v1/admin/lesson', methods: ['GET'])]
     public function getLessons(): JsonResponse
     {
         return $this->json($this->lessonService->getLessons());
     }
 
-    #[Route(path: '/api/v1/admin/lesson/{id}', name: 'lesson_show', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[Route(path: '/api/v1/admin/lesson/{id}', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function getLesson(int $id): JsonResponse
     {
         return $this->json($this->lessonService->getLesson($id));
@@ -143,7 +163,7 @@ class AdminController extends AbstractController
         return $this->json($this->lessonService->createLesson($request));
     }
 
-    #[Route('api/v1/admin/lesson/{id}', requirements: ['id' => '\d+'], methods: ['DELETE'])]
+    #[Route('/api/v1/admin/lesson/{id}', requirements: ['id' => '\d+'], methods: ['DELETE'])]
     public function deleteLesson(int $id): JsonResponse
     {
         $this->lessonService->deleteLesson($id);

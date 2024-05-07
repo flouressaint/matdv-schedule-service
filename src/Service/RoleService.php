@@ -12,19 +12,19 @@ class RoleService
     {
     }
 
-    public function grantAdmin(int $userId): void
+    public function grantAdmin(string $username): void
     {
-        $this->grantRole($userId, 'ROLE_ADMIN');
+        $this->grantRole($username, 'ROLE_ADMIN');
     }
 
-    public function grantTeacher(int $userId): void
+    public function grantTeacher(string $username): void
     {
-        $this->grantRole($userId, 'ROLE_TEACHER');
+        $this->grantRole($username, 'ROLE_TEACHER');
     }
 
-    private function grantRole(int $userId, string $role): void
+    private function grantRole(string $username, string $role): void
     {
-        $user = $this->userRepository->getUserById($userId);
+        $user = $this->userRepository->getUserByUsername($username);
         $user->setRoles([$role]);
 
         $this->userRepository->commit();

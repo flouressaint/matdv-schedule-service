@@ -21,13 +21,13 @@ class MakeAdminCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument('user-id', InputArgument::REQUIRED, 'User ID');
+        $this->addArgument('username', InputArgument::REQUIRED, 'Username');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $userId = (int) $input->getArgument('user-id');
-        $this->roleService->grantAdmin($userId);
+        $username = (string) $input->getArgument('username');
+        $this->roleService->grantAdmin($username);
 
         return Command::SUCCESS;
     }

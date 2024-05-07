@@ -16,6 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
+#[OA\Tag(name: 'Auth')]
 class AuthController extends AbstractController
 {
     public function __construct(private readonly SignUpService $signUpService)

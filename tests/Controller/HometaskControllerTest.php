@@ -34,14 +34,14 @@ class HometaskControllerTest extends AbstractControllerTest
         $this->em->persist($hometask);
         $this->em->flush();
 
-        $this->client->request('DELETE', '/api/v1/hometask/'.$hometask->getId());
+        $this->client->request('DELETE', '/api/v1/admin/hometask/'.$hometask->getId());
 
         $this->assertResponseIsSuccessful();
     }
 
     public function testCreate(): void
     {
-        $this->client->request('POST', '/api/v1/hometask', [
+        $this->client->request('POST', '/api/v1/admin/hometask', [
             'description' => 'hometask2',
             'attachment' => 'attachment2',
         ]);

@@ -35,7 +35,7 @@ security:
     access_control:
         - { path: ^/api/v1/teacher, roles: ROLE_TEACHER }
         - { path: ^/api/v1/admin, roles: ROLE_ADMIN }
-        - { path: ^/api/v1/user, roles: ROLE_USER }
+        - { path: ^/api/v1/student, roles: ROLE_USER }
         - { path: ^/api,       roles: PUBLIC_ACCESS }
 
 
