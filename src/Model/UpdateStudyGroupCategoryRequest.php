@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class UpdateStudyGroupCategoryRequest
 {
-    #[NotBlank]
+    #[Assert\NotBlank(message: 'Study group category name cannot be empty.')]
     private ?string $name = null;
 
     public function getName(): ?string

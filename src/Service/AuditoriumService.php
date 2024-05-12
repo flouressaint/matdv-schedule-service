@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Auditorium;
+use App\Exception\AuditoriumAlreadyExistsException;
 use App\Model\AuditoriumListItem;
 use App\Model\AuditoriumListResponse;
 use App\Model\CreateAuditoriumRequest;
@@ -42,6 +43,10 @@ class AuditoriumService
 
     public function createAuditorium(CreateAuditoriumRequest $request): IdResponse
     {
+        if ($this->auditoriumRepository->existsByName($request->getName())) {
+            throw new AuditoriumAlreadyExistsException();
+        }
+
         $auditorium = (new Auditorium())->setName($request->getName());
         $this->auditoriumRepository->saveAndCommit($auditorium);
 
@@ -51,6 +56,9 @@ class AuditoriumService
     public function updateAuditorium(int $id, UpdateAuditoriumRequest $request): void
     {
         $auditorium = $this->auditoriumRepository->getAuditoriumById($id);
+        if ($request->getName() !== $auditorium->getName() && $this->auditoriumRepository->existsByName($request->getName())) {
+            throw new AuditoriumAlreadyExistsException();
+        }
         $auditorium->setName($request->getName());
         $this->auditoriumRepository->commit();
     }

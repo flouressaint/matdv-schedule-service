@@ -4,19 +4,23 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use Symfony\Component\Validator\Constraints\NotBlank;
+use OpenApi\Attributes as OA;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateLessonRequest
 {
-    #[NotBlank]
+    #[Assert\NotBlank(message: 'Date is required')]
+    #[OA\Property(type: 'string', format: 'date')]
     private \DateTimeImmutable $date;
-    #[NotBlank]
+    #[Assert\NotBlank(message: 'Start time is required')]
+    #[OA\Property(type: 'string', format: 'date-time', example: '10:00')]
     private \DateTimeImmutable $startTime;
-    #[NotBlank]
+    #[Assert\NotBlank(message: 'End time is required')]
+    #[OA\Property(type: 'string', format: 'date-time', example: '11:00')]
     private \DateTimeImmutable $endTime;
-    #[NotBlank]
+    #[Assert\NotBlank(message: 'AuditoriumId is required')]
     private int $auditoriumId;
-    #[NotBlank]
+    #[Assert\NotBlank(message: 'StudyGroupId is required')]
     private int $studyGroupId;
 
     public function getDate(): \DateTimeImmutable

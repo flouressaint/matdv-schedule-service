@@ -39,6 +39,11 @@ class StudyGroupCategoryRepository extends ServiceEntityRepository
     {
         return $this->findBy([], ['name' => Criteria::ASC]);
     }
+
+    public function existsByName(string $name): bool
+    {
+        return null !== $this->findOneBy(['name' => $name]);
+    }
     //    /**
     //     * @return StudyGroupCategory[] Returns an array of StudyGroupCategory objects
     //     */

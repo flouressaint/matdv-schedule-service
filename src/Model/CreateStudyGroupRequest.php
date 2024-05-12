@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateStudyGroupRequest
 {
-    #[NotBlank]
+    #[Assert\NotBlank(message: 'Study group name cannot be empty')]
     private string $name;
-    #[NotBlank]
+    #[Assert\NotBlank(message: 'TeacherId cannot be empty')]
     private int $teacherId;
-    #[NotBlank]
+    #[Assert\NotBlank(message: 'CategoryId cannot be empty')]
     private int $categoryId;
 
     public function getName(): string

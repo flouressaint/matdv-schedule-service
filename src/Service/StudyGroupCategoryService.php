@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\StudyGroupCategory;
+use App\Exception\StudyGroupCategoryAlreadyExistsException;
 use App\Model\CreateStudyGroupCategoryRequest;
 use App\Model\IdResponse;
 use App\Model\StudyGroupCategoryListItem;
@@ -45,6 +46,9 @@ class StudyGroupCategoryService
 
     public function createStudyGroupCategory(CreateStudyGroupCategoryRequest $request): IdResponse
     {
+        if ($this->studyGroupCategoryRepository->existsByName($request->getName())) {
+            throw new StudyGroupCategoryAlreadyExistsException();
+        }
         $studyGroupCategory = (new StudyGroupCategory())
             ->setName($request->getName());
         $this->studyGroupCategoryRepository->saveAndCommit($studyGroupCategory);
@@ -55,6 +59,11 @@ class StudyGroupCategoryService
     public function updateStudyGroupCategory(int $id, UpdateStudyGroupCategoryRequest $request): void
     {
         $studyGroupCategory = $this->studyGroupCategoryRepository->getStudyGroupCategoryById($id);
+
+        if ($request->getName() !== $studyGroupCategory->getName() && $this->studyGroupCategoryRepository->existsByName($request->getName())) {
+            throw new StudyGroupCategoryAlreadyExistsException();
+        }
+
         $studyGroupCategory->setName($request->getName());
         $this->studyGroupCategoryRepository->commit();
     }

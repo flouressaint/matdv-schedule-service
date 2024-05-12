@@ -5,7 +5,6 @@ use App\Exception\HometaskNotFoundException;
 use App\Model\CreateHometaskRequest;
 use App\Model\HometaskResponse;
 use App\Model\IdResponse;
-use App\Model\UpdateHometaskRequest;
 use App\Repository\HometaskRepository;
 use App\Service\HometaskService;
 use App\Tests\AbstractTestCase;
@@ -70,7 +69,7 @@ class HometaskServiceTest extends AbstractTestCase
         ->with(1)
         ->willReturn($hometask);
 
-        $payload = (new UpdateHometaskRequest())->setDescription('Old')->setAttachment('Old');
+        $payload = (new CreateHometaskRequest())->setDescription('Old')->setAttachment('Old');
 
         $service = new HometaskService($repository);
         $service->updateHometask(1, $payload);

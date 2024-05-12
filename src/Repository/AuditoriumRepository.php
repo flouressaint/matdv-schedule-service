@@ -39,6 +39,11 @@ class AuditoriumRepository extends ServiceEntityRepository
 
         return $auditroium;
     }
+
+    public function existsByName(string $name): bool
+    {
+        return null !== $this->findOneBy(['name' => $name]);
+    }
     //    /**
     //     * @return Auditorium[] Returns an array of Auditorium objects
     //     */

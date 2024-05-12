@@ -49,6 +49,11 @@ class StudyGroupRepository extends ServiceEntityRepository
 
         return $studyGroups;
     }
+
+    public function existsByName(string $name): bool
+    {
+        return null !== $this->findOneBy(['name' => $name]);
+    }
     //    /**
     //     * @return StudyGroup[] Returns an array of StudyGroup objects
     //     */

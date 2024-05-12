@@ -4,6 +4,107 @@ nelmio_api_doc:
             title: Scheduler API
             description: API for schedule lessons in Far East Math Center
             version: 1.0.0
+        components:
+                securitySchemes:
+                    Bearer:
+                        type: http
+                        scheme: bearer
+                        bearerFormat: JWT
+        security:
+            - Bearer: []
+        paths:
+          /api/v1/auth/login:
+            post:
+              tags:
+                - Auth
+              description: Login into the api.
+              requestBody:
+                description: Json body
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                        password:
+                          type: string
+              responses:
+                '200':
+                  description: Login successful
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          token:
+                            type: string
+                          refresh_token:
+                            type: string
+                '400':
+                  description: Bad Credentials
+                  content:
+                   application/json:
+                    schema:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                '401':
+                  description: Invalid credentials
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          code:
+                            type: string
+                            description: Error code
+                          message:
+                            type: string
+                            description: Error message
+          /api/v1/auth/refresh:
+            post:
+              tags:
+                - Auth
+              description: Refresh access token.
+              requestBody:
+                description: Json body
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        refresh_token:
+                          type: string
+              responses:
+                '200':
+                  description: Refresh successful
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          token:
+                            type: string
+                          refresh_token:
+                            type: string
+                '401':
+                  description: Invalid refresh token
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          code:
+                            type: string
+                            description: Error code
+                          message:
+                            type: string
+                            description: Error message
     areas: # to filter documented areas
         path_patterns:
             - ^/api/v1

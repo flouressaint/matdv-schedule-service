@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateAuditoriumRequest
 {
-    #[NotBlank]
+    #[Assert\NotBlank(message: 'Auditorium name should not be empty')]
     private string $name;
 
     public function getName(): string

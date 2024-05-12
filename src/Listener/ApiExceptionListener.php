@@ -12,9 +12,11 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Exception\ValidationFailedException;
 
 class ApiExceptionListener
 {
@@ -32,7 +34,16 @@ class ApiExceptionListener
         if ($this->isSecurityException($throwable)) {
             return;
         }
+        if ($throwable->getPrevious() instanceof ValidationFailedException) {
+            $data = $this->serializer->serialize(
+                new ErrorResponse($throwable->getMessage()),
+                JsonEncoder::FORMAT,
+            );
 
+            $event->setResponse(new JsonResponse($data, Response::HTTP_UNPROCESSABLE_ENTITY, [], true));
+
+            return;
+        }
         $mapping = $this->resolver->resolve($throwable::class);
         if (null === $mapping) {
             $mapping = ExceptionMapping::fromCode(Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -57,6 +68,6 @@ class ApiExceptionListener
 
     private function isSecurityException(\Throwable $throwable): bool
     {
-        return $throwable instanceof AuthenticationException;
+        return $throwable instanceof AuthenticationException || $throwable instanceof AccessDeniedException;
     }
 }

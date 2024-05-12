@@ -6,6 +6,8 @@ namespace App\Service;
 
 use App\Entity\StudyGroup;
 use App\Entity\User;
+use App\Exception\StudentAlreadyEnrolledException;
+use App\Exception\StudyGroupAlreadyExistsException;
 use App\Model\CreateStudyGroupRequest;
 use App\Model\IdResponse;
 use App\Model\StudyGroupListItem;
@@ -102,6 +104,9 @@ class StudyGroupService
 
     public function createStudyGroup(CreateStudyGroupRequest $request): IdResponse
     {
+        if ($this->studyGroupRepository->existsByName($request->getName())) {
+            throw new StudyGroupAlreadyExistsException();
+        }
         $studyGroup = (new StudyGroup())
             ->setName($request->getName())
             ->setTeacher($this->userRepository->getTeacherById($request->getTeacherId()))
@@ -114,6 +119,9 @@ class StudyGroupService
     public function updateStudyGroup(int $id, UpdateStudyGroupRequest $request): void
     {
         $studyGroup = $this->studyGroupRepository->getStudyGroupById($id);
+        if ($request->getName() !== $studyGroup->getName() && $this->studyGroupRepository->existsByName($request->getName())) {
+            throw new StudyGroupAlreadyExistsException();
+        }
         if (null !== $request->getName()) {
             $studyGroup->setName($request->getName());
         }
@@ -133,9 +141,10 @@ class StudyGroupService
     {
         $studyGroup = $this->studyGroupRepository->getStudyGroupById($id);
         $student = $this->userRepository->getUserByUsername($studentUsername);
-        if (!$studyGroup->getStudents()->contains($student)) {
-            $studyGroup->addStudent($student);
+        if ($studyGroup->getStudents()->contains($student)) {
+            throw new StudentAlreadyEnrolledException();
         }
+        $studyGroup->addStudent($student);
         $this->studyGroupRepository->commit();
     }
 }

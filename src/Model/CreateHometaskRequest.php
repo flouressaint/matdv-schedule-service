@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateHometaskRequest
 {
-    #[NotBlank]
+    #[Assert\NotBlank(message: 'Hometask description should not be empty')]
     private string $description;
     private string $attachment;
 

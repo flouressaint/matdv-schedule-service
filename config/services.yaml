@@ -12,8 +12,12 @@ parameters:
         App\Exception\StudyGroupNotFoundException: { code: 404, hidden: false }
         App\Exception\StudyGroupCategoryNotFoundException: { code: 404, hidden: false }
         App\Exception\TeacherNotFoundException: { code: 404, hidden: false }
-        # App\Exception\UserAlreadyExistsException: { code: 404, hidden: false }
         App\Exception\UserNotFoundException: { code: 404, hidden: false }
+        App\Exception\UserAlreadyExistsException: { code: 409, hidden: false }
+        App\Exception\AuditoriumAlreadyExistsException: { code: 409, hidden: false }
+        App\Exception\StudentAlreadyExistsException: { code: 409, hidden: false }
+        App\Exception\StudyGroupAlreadyExistsException: { code: 409, hidden: false }
+        App\Exception\StudyGroupCategoryAlreadyExistsException: { code: 409, hidden: false }
 
 services:
     # default configuration for services in *this* file

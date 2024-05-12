@@ -30,7 +30,7 @@ class AuthController extends AbstractController
             new OA\Property(property: 'refresh_token', type: 'string')])
     )]
     #[OA\Response(response: 409, description: 'User already exists', attachables: [new Model(type: ErrorResponse::class)])]
-    #[OA\Response(response: 400, description: 'Validation failed', attachables: [new Model(type: ErrorResponse::class)])]
+    #[OA\Response(response: 422, description: 'Validation failed', attachables: [new Model(type: ErrorResponse::class)])]
     #[OA\RequestBody(attachables: [new Model(type: SignUpRequest::class)])]
     public function signUp(#[MapRequestPayload] SignUpRequest $signUpRequest): Response
     {

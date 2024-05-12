@@ -85,10 +85,10 @@ class LessonService
         $studyGroup = $this->studyGroupRepository->getStudyGroupById($request->getStudyGroupId());
         $lessons = $this->lessonRepository->getLessonsByDateAndTime($request->getDate(), $request->getStartTime(), $request->getEndTime());
         if (!$this->isAuditoriumFree($auditorium, $lessons)) {
-            throw new \DomainException('Auditorium is not free in this time', 400);
+            throw new \DomainException('Auditorium is not free at this time', 400);
         }
         if (!$this->isStudyGroupFree($studyGroup, $lessons)) {
-            throw new \DomainException('Study group is not free in this time', 400);
+            throw new \DomainException('Study group is not free at this time', 400);
         }
         $lesson = (new Lesson())
             ->setDate($request->getDate())
