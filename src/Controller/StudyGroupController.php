@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[OA\Tag(name: 'StudyGroups')]
-class StudyGroupCategoryController extends AbstractController
+class StudyGroupController extends AbstractController
 {
     public function __construct(
         private readonly StudyGroupCategoryService $studyGroupCategoryService,
