@@ -55,7 +55,7 @@ class StudyGroupService
     public function getStudyGroupsForTeacher(UserInterface $user): StudyGroupListResponse
     {
         $studyGroups = $this->studyGroupRepository->findAllSortedByName();
-        $studyGroups = array_filter($studyGroups, fn (StudyGroup $studyGroup) => $studyGroup->getTeacher() === $user);
+        $studyGroups = array_values(array_filter($studyGroups, fn (StudyGroup $studyGroup) => $studyGroup->getTeacher() === $user));
         $studyGroups = array_map(
             fn (StudyGroup $studyGroup) => new StudyGroupListItem(
                 $studyGroup->getId(),
@@ -78,7 +78,7 @@ class StudyGroupService
     public function getStudyGroupsForStudent(UserInterface $user): StudyGroupListResponse
     {
         $studyGroups = $this->studyGroupRepository->findAllSortedByName();
-        $studyGroups = array_filter($studyGroups, fn (StudyGroup $studyGroup) => $studyGroup->getStudents()->contains($user));
+        $studyGroups = array_values(array_filter($studyGroups, fn (StudyGroup $studyGroup) => $studyGroup->getStudents()->contains($user)));
         $studyGroups = array_map(
             fn (StudyGroup $studyGroup) => new StudyGroupListItem(
                 $studyGroup->getId(),

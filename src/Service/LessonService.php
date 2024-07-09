@@ -7,6 +7,8 @@ namespace App\Service;
 use App\Entity\Auditorium;
 use App\Entity\Lesson;
 use App\Entity\StudyGroup;
+use App\Exception\WrongAuditoriumOfLessonException;
+use App\Exception\WrongStudyGroupOfLessonException;
 use App\Model\AuditoriumListItem;
 use App\Model\CreateHometaskRequest;
 use App\Model\CreateLessonRequest;
@@ -141,10 +143,10 @@ class LessonService
         $studyGroup = $this->studyGroupRepository->getStudyGroupById($request->getStudyGroupId());
         $lessons = $this->lessonRepository->getLessonsByDateAndTime($request->getDate(), $request->getStartTime(), $request->getEndTime());
         if (!$this->isAuditoriumFree($auditorium, $lessons)) {
-            throw new \DomainException('Auditorium is not free at this time', 400);
+            throw new WrongAuditoriumOfLessonException();
         }
         if (!$this->isStudyGroupFree($studyGroup, $lessons)) {
-            throw new \DomainException('Study group is not free at this time', 400);
+            throw new WrongStudyGroupOfLessonException();
         }
         $lesson = (new Lesson())
             ->setDate($request->getDate())
@@ -168,10 +170,10 @@ class LessonService
         $lessons = $this->lessonRepository->getLessonsByDateAndTime($request->getDate(), $request->getStartTime(), $request->getEndTime());
         $lessons = array_values(array_filter($lessons, fn (Lesson $lesson) => $lesson->getId() !== $id));
         if (!$this->isAuditoriumFree($auditorium, $lessons)) {
-            throw new \DomainException('Auditorium is not free at this time', 400);
+            throw new WrongAuditoriumOfLessonException();
         }
         if (!$this->isStudyGroupFree($studyGroup, $lessons)) {
-            throw new \DomainException('Study group is not free at this time', 400);
+            throw new WrongStudyGroupOfLessonException();
         }
 
         $lesson->setDate($request->getDate())

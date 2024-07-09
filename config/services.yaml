@@ -18,6 +18,10 @@ parameters:
         App\Exception\StudentAlreadyExistsException: { code: 409, hidden: false }
         App\Exception\StudyGroupAlreadyExistsException: { code: 409, hidden: false }
         App\Exception\StudyGroupCategoryAlreadyExistsException: { code: 409, hidden: false }
+        App\Exception\WrongAuditoriumOfLessonException: { code: 400, hidden: false }
+        App\Exception\WrongTeacherOfLessonException: { code: 400, hidden: false }
+        App\Exception\WrongStudentOfStudyGroupException: { code: 400, hidden: false }
+        App\Exception\WrongStudyGroupOfLessonException: { code: 400, hidden: false }
 
 services:
     # default configuration for services in *this* file
