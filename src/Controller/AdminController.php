@@ -9,7 +9,9 @@ use App\Model\CreateLessonRequest;
 use App\Model\CreateStudyGroupCategoryRequest;
 use App\Model\CreateStudyGroupRequest;
 use App\Model\ErrorResponse;
+use App\Model\LessonListResponse;
 use App\Model\UpdateAuditoriumRequest;
+use App\Model\UpdateLessonRequest;
 use App\Model\UpdateStudyGroupCategoryRequest;
 use App\Model\UpdateStudyGroupRequest;
 use App\Service\AuditoriumService;
@@ -35,6 +37,13 @@ class AdminController extends AbstractController
         private readonly StudyGroupCategoryService $studyGroupCategoryService,
         private readonly LessonService $lessonService
     ) {
+    }
+
+    #[Route(path: '/api/v1/admin/teachers', methods: ['GET'])]
+    #[OA\Response(response: 200, description: 'Returns list of teachers')]
+    public function teachers(): JsonResponse
+    {
+        return $this->json($this->roleService->getTeachers());
     }
 
     #[Route(path: '/api/v1/admin/grantTeacher/{username}', methods: ['POST'])]
@@ -92,12 +101,12 @@ class AdminController extends AbstractController
 
     #[Route(path: '/api/v1/admin/studyGroups', methods: ['GET'])]
     #[OA\Response(response: 200, description: 'Returns list of study groups')]
-    public function StudyGroups(): JsonResponse
+    public function studyGroups(): JsonResponse
     {
         return $this->json($this->studyGroupService->getStudyGroups());
     }
 
-    #[Route(path: '/api/v1/admin/studyGroup/{id}', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[Route(path: '/api/v1/teacher/studyGroup/{id}', requirements: ['id' => '\d+'], methods: ['GET'])]
     #[OA\Response(response: 200, description: 'Returns study group full information')]
     #[OA\Response(response: 404, description: 'Study group not found', attachables: [new Model(type: ErrorResponse::class)])]
     public function getStudyGroup(int $id): JsonResponse
@@ -187,7 +196,7 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/api/v1/admin/lessons', methods: ['GET'])]
-    #[OA\Response(response: 200, description: 'Returns list of lessons')]
+    #[OA\Response(response: 200, description: 'Returns list of lessons', attachables: [new Model(type: LessonListResponse::class)])]
     public function Lessons(): JsonResponse
     {
         return $this->json($this->lessonService->getLessons());
@@ -209,6 +218,14 @@ class AdminController extends AbstractController
     public function createLesson(#[MapRequestPayload] CreateLessonRequest $request): JsonResponse
     {
         return $this->json($this->lessonService->createLesson($request));
+    }
+
+    #[Route('/api/v1/admin/lesson/{id}', requirements: ['id' => '\d+'], methods: ['PUT'])]
+    public function editLesson(int $id, #[MapRequestPayload] UpdateLessonRequest $request): JsonResponse
+    {
+        $this->lessonService->updateLesson($id, $request);
+
+        return $this->json(null);
     }
 
     #[Route('/api/v1/admin/lesson/{id}', requirements: ['id' => '\d+'], methods: ['DELETE'])]

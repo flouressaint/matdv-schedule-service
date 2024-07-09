@@ -17,11 +17,11 @@ class Hometask
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 700, nullable: true)]
-    private ?string $attachment = null;
-
     #[ORM\OneToOne(mappedBy: 'hometask', cascade: ['persist', 'remove'])]
     private ?Lesson $lesson = null;
+
+    #[ORM\Column]
+    private ?int $maxScore = null;
 
     public function getId(): ?int
     {
@@ -40,18 +40,6 @@ class Hometask
         return $this;
     }
 
-    public function getAttachment(): ?string
-    {
-        return $this->attachment;
-    }
-
-    public function setAttachment(?string $attachment): static
-    {
-        $this->attachment = $attachment;
-
-        return $this;
-    }
-
     public function getLesson(): ?Lesson
     {
         return $this->lesson;
@@ -60,16 +48,28 @@ class Hometask
     public function setLesson(?Lesson $lesson): static
     {
         // unset the owning side of the relation if necessary
-        if ($lesson === null && $this->lesson !== null) {
+        if (null === $lesson && null !== $this->lesson) {
             $this->lesson->setHometask(null);
         }
 
         // set the owning side of the relation if necessary
-        if ($lesson !== null && $lesson->getHometask() !== $this) {
+        if (null !== $lesson && $lesson->getHometask() !== $this) {
             $lesson->setHometask($this);
         }
 
         $this->lesson = $lesson;
+
+        return $this;
+    }
+
+    public function getMaxScore(): ?int
+    {
+        return $this->maxScore;
+    }
+
+    public function setMaxScore(int $maxScore): static
+    {
+        $this->maxScore = $maxScore;
 
         return $this;
     }

@@ -9,7 +9,7 @@ class HometaskResponse
     public function __construct(
         private int $id,
         private string $description,
-        private string $attachment
+        private int $maxScore
     ) {
     }
 
@@ -23,8 +23,8 @@ class HometaskResponse
         return $this->description;
     }
 
-    public function getAttachment(): string
+    public function getMaxScore(): int
     {
-        return $this->attachment;
+        return $this->maxScore;
     }
 }

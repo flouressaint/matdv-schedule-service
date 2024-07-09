@@ -17,7 +17,6 @@ class LessonFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             AuditoriumFixtures::class,
-            DisciplineFixtures::class,
         ];
     }
 }

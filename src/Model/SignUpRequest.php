@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 class SignUpRequest
 {
-    #[NotBlank]
+    #[Assert\NotBlank(message: 'Full name cannot be blank')]
     private string $fullName;
 
-    #[NotBlank]
+    #[Assert\NotBlank(message: 'Username cannot be blank')]
     private string $username;
 
-    #[NotBlank]
+    #[Assert\NotBlank(message: 'Password cannot be blank')]
     #[Length(min: 8)]
     private string $password;
 
-    #[NotBlank]
+    #[Assert\NotBlank(message: 'Confirm password cannot be blank')]
     #[EqualTo(propertyPath: 'password', message: 'This value should be equal to password field')]
     private string $confirmPassword;
 

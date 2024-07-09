@@ -59,7 +59,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function isTeacher(User $user): bool
     {
-        return 'ROLE_TEACHER' === $user->getRoles()[0];
+        foreach ($user->getRoles() as $role) {
+            if ('ROLE_TEACHER' === $role) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function getTeacherById(int $teacherId): User
@@ -80,6 +86,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
 
         return $user;
+    }
+
+    public function getTeachers(): array
+    {
+        $users = $this->findAll();
+
+        return array_values(array_filter($users, fn (User $user) => $this->isTeacher($user)));
     }
 
     //    /**

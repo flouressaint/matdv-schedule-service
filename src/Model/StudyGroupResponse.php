@@ -12,6 +12,7 @@ class StudyGroupResponse
     public function __construct(
         private int $id,
         private string $name,
+        private StudyGroupCategoryListItem $category,
         private UserResponse $teacher,
         private array $students = []
     ) {
@@ -25,6 +26,11 @@ class StudyGroupResponse
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function getCategory(): StudyGroupCategoryListItem
+    {
+        return $this->category;
     }
 
     public function getTeacher(): UserResponse

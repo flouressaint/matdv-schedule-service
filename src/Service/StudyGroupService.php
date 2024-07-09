@@ -10,6 +10,7 @@ use App\Exception\StudentAlreadyEnrolledException;
 use App\Exception\StudyGroupAlreadyExistsException;
 use App\Model\CreateStudyGroupRequest;
 use App\Model\IdResponse;
+use App\Model\StudyGroupCategoryListItem;
 use App\Model\StudyGroupListItem;
 use App\Model\StudyGroupListResponse;
 use App\Model\StudyGroupResponse;
@@ -31,15 +32,42 @@ class StudyGroupService
 
     public function getStudyGroups(): StudyGroupListResponse
     {
-        $studyGroups = $this->studyGroupRepository->findAllSortedByName();
+        $studyGroups = $this->studyGroupRepository->findAllWithCategorySortedByCategory();
         $studyGroups = array_map(
             fn (StudyGroup $studyGroup) => new StudyGroupListItem(
                 $studyGroup->getId(),
                 $studyGroup->getName(),
+                new StudyGroupCategoryListItem(
+                    $studyGroup->getStudyGroupCategory()->getId(),
+                    $studyGroup->getStudyGroupCategory()->getName()
+                ),
                 new UserResponse(
                     $studyGroup->getTeacher()->getId(),
                     $studyGroup->getTeacher()->getFullName()
                 )
+            ),
+            $studyGroups
+        );
+
+        return new StudyGroupListResponse($studyGroups);
+    }
+
+    public function getStudyGroupsForTeacher(UserInterface $user): StudyGroupListResponse
+    {
+        $studyGroups = $this->studyGroupRepository->findAllSortedByName();
+        $studyGroups = array_filter($studyGroups, fn (StudyGroup $studyGroup) => $studyGroup->getTeacher() === $user);
+        $studyGroups = array_map(
+            fn (StudyGroup $studyGroup) => new StudyGroupListItem(
+                $studyGroup->getId(),
+                $studyGroup->getName(),
+                new StudyGroupCategoryListItem(
+                    $studyGroup->getStudyGroupCategory()->getId(),
+                    $studyGroup->getStudyGroupCategory()->getName()
+                ),
+                new UserResponse(
+                    $studyGroup->getTeacher()->getId(),
+                    $studyGroup->getTeacher()->getFullName()
+                ),
             ),
             $studyGroups
         );
@@ -55,6 +83,10 @@ class StudyGroupService
             fn (StudyGroup $studyGroup) => new StudyGroupListItem(
                 $studyGroup->getId(),
                 $studyGroup->getName(),
+                new StudyGroupCategoryListItem(
+                    $studyGroup->getStudyGroupCategory()->getId(),
+                    $studyGroup->getStudyGroupCategory()->getName()
+                ),
                 new UserResponse(
                     $studyGroup->getTeacher()->getId(),
                     $studyGroup->getTeacher()->getFullName()
@@ -73,7 +105,8 @@ class StudyGroupService
             fn (StudyGroup $studyGroup) => new StudyGroupListItem(
                 $studyGroup->getId(),
                 $studyGroup->getName(),
-                new UserResponse($studyGroup->getTeacher()->getId(), $studyGroup->getTeacher()->getFullName()),
+                category: null,
+                teacher: new UserResponse($studyGroup->getTeacher()->getId(), $studyGroup->getTeacher()->getFullName()),
             ),
             $studyGroups
         );
@@ -97,6 +130,10 @@ class StudyGroupService
         return new StudyGroupResponse(
             $studyGroup->getId(),
             $studyGroup->getName(),
+            new StudyGroupCategoryListItem(
+                $studyGroup->getStudyGroupCategory()->getId(),
+                $studyGroup->getStudyGroupCategory()->getName()
+            ),
             new UserResponse($teacher->getId(), $teacher->getFullName()),
             $students
         );
@@ -127,6 +164,10 @@ class StudyGroupService
         }
         if (null !== $request->getTeacherId()) {
             $studyGroup->setTeacher($this->userRepository->getTeacherById($request->getTeacherId()));
+        }
+
+        if (null !== $request->getCategoryId()) {
+            $studyGroup->setStudyGroupCategory($this->studyGroupCategoryRepository->getStudyGroupCategoryById($request->getCategoryId()));
         }
         $this->studyGroupRepository->commit();
     }

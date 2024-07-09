@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\LessonRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -33,6 +35,14 @@ class Lesson
 
     #[ORM\OneToOne(inversedBy: 'lesson', cascade: ['persist', 'remove'])]
     private ?Hometask $hometask = null;
+
+    #[ORM\OneToMany(targetEntity: Score::class, mappedBy: 'lesson')]
+    private Collection $scores;
+
+    public function __construct()
+    {
+        $this->scores = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -107,6 +117,36 @@ class Lesson
     public function setHometask(?Hometask $hometask): static
     {
         $this->hometask = $hometask;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Score>
+     */
+    public function getScores(): Collection
+    {
+        return $this->scores;
+    }
+
+    public function addScore(Score $score): static
+    {
+        if (!$this->scores->contains($score)) {
+            $this->scores->add($score);
+            $score->setLesson($this);
+        }
+
+        return $this;
+    }
+
+    public function removeScore(Score $score): static
+    {
+        if ($this->scores->removeElement($score)) {
+            // set the owning side to null (unless already changed)
+            if ($score->getLesson() === $this) {
+                $score->setLesson(null);
+            }
+        }
 
         return $this;
     }

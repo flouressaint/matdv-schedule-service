@@ -58,6 +58,18 @@ class LessonRepository extends ServiceEntityRepository
         return $lesson;
     }
 
+    public function getLessonsForStudyGroup(int $studyGroupId): array
+    {
+        return $this->createQueryBuilder('l')
+            ->andWhere('l.studyGroup = :studyGroupId')
+            ->setParameter('studyGroupId', $studyGroupId)
+            ->orderBy('l.startTime', 'ASC')
+            ->orderBy('l.date', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     //    /**
     //     * @return Lesson[] Returns an array of Lesson objects
     //     */

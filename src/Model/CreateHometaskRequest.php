@@ -10,7 +10,8 @@ class CreateHometaskRequest
 {
     #[Assert\NotBlank(message: 'Hometask description should not be empty')]
     private string $description;
-    private string $attachment;
+    #[Assert\NotBlank(message: 'Hometask max score should not be empty')]
+    private int $maxScore;
 
     public function getDescription(): string
     {
@@ -24,14 +25,14 @@ class CreateHometaskRequest
         return $this;
     }
 
-    public function getAttachment(): string
+    public function getMaxScore(): int
     {
-        return $this->attachment;
+        return $this->maxScore;
     }
 
-    public function setAttachment(string $attachment): self
+    public function setMaxScore(int $maxScore): self
     {
-        $this->attachment = $attachment;
+        $this->maxScore = $maxScore;
 
         return $this;
     }

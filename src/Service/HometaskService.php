@@ -20,14 +20,14 @@ class HometaskService
     {
         $hometask = $this->hometaskRepository->getHometaskById($id);
 
-        return new HometaskResponse($hometask->getId(), $hometask->getDescription(), $hometask->getAttachment());
+        return new HometaskResponse($hometask->getId(), $hometask->getDescription(), $hometask->getMaxScore());
     }
 
     public function createHometask(CreateHometaskRequest $request): Hometask
     {
         $hometask = (new Hometask())
             ->setDescription($request->getDescription())
-            ->setAttachment($request->getAttachment());
+            ->setMaxScore($request->getMaxScore());
         $this->hometaskRepository->saveAndCommit($hometask);
 
         return $hometask;
@@ -37,7 +37,7 @@ class HometaskService
     {
         $hometask = $this->hometaskRepository->getHometaskById($id);
         $hometask->setDescription($request->getDescription())
-                 ->setAttachment($request->getAttachment());
+                 ->setMaxScore($request->getMaxScore());
         $this->hometaskRepository->commit();
     }
 
